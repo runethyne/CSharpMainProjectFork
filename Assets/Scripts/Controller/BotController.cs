@@ -10,6 +10,7 @@ using Utilities;
 //How are you?
 //i'm fine
 //i'm here
+//how are you? x2
 namespace Controller
 {
     public class BotController
