@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -41,6 +42,10 @@ namespace UnitBrains.Player
         {
             List<Vector2Int> result = GetReachableTargets();
             float closestDistance = float.MaxValue;
+            if (result.Count == 0)
+            {
+                return result;
+            }
             Vector2Int closestTarget = result[0];
             foreach (Vector2Int target in result)
             {
