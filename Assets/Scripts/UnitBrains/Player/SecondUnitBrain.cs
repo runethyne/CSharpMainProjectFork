@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -35,29 +39,74 @@ namespace UnitBrains.Player
         }
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            List<Vector2Int> Targets = SelectTargets();
+            List<Vector2Int> ReachableTargets = GetReachableTargets();
+            if (Targets.Count > 0 ) 
+            {
+                if (ReachableTargets.Contains(Targets[0]))
+                {
+                    Vector2Int position = unit.Pos;
+                    return position;
+                }
+                else
+                {
+                    Vector2Int position = unit.Pos;
+                    Vector2Int nextPosition = Targets[0];
+                    return position.CalcNextStepTowards(nextPosition);
+                }
+            }
+            else
+                {
+                    Vector2Int position = unit.Pos;
+                    return position;
+                }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
-            float closestDistance = float.MaxValue;
-            if (result.Count == 0)
+            IEnumerable<Vector2Int> AllTargets = GetAllTargets();
+            List<Vector2Int> ReachableTargets = GetReachableTargets();
+            List<Vector2Int> UnreachableTargets = new List<Vector2Int>();
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            if (AllTargets.Count() == 0)
             {
-                return result;
-            }
-            Vector2Int closestTarget = result[0];
-            foreach (Vector2Int target in result)
-            {
-                float distance = DistanceToOwnBase(target);
-                if (distance < closestDistance)
+                if (IsPlayerUnitBrain)
                 {
-                    closestDistance = distance;
-                    closestTarget = target;
+                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+                }
+                else
+                {
+                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
                 }
             }
-            result.Clear();
-            result.Add(closestTarget);
+            else
+            {
+                float closestDistance = float.MaxValue;
+
+                Vector2Int closestTarget = AllTargets.ElementAt(0);
+                foreach (Vector2Int target in AllTargets)
+                {
+                    float distance = DistanceToOwnBase(target);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestTarget = target;
+                    }
+                }
+
+                if (ReachableTargets.Contains(closestTarget))
+                {
+                    result.Add(closestTarget);
+                }
+                else
+                {
+                    UnreachableTargets.Add(closestTarget);
+                }
+
+                //result.Clear();
+                result.Add(closestTarget);
+            }
             return result;
         }
 
