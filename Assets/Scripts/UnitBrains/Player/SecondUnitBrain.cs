@@ -18,6 +18,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _currentTargets = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -39,74 +40,59 @@ namespace UnitBrains.Player
         }
         public override Vector2Int GetNextStep()
         {
-            List<Vector2Int> Targets = SelectTargets();
-            List<Vector2Int> ReachableTargets = GetReachableTargets();
-            if (Targets.Count > 0 ) 
+            if (_currentTargets.Count > 0 ) 
             {
-                if (ReachableTargets.Contains(Targets[0]))
+                if (IsTargetInRange(_currentTargets[0]))
                 {
-                    Vector2Int position = unit.Pos;
-                    return position;
+                    return unit.Pos;
                 }
                 else
                 {
-                    Vector2Int position = unit.Pos;
-                    Vector2Int nextPosition = Targets[0];
-                    return position.CalcNextStepTowards(nextPosition);
+                    return unit.Pos.CalcNextStepTowards(_currentTargets[0]);
                 }
             }
             else
                 {
-                    Vector2Int position = unit.Pos;
-                    return position;
-                }
+                return unit.Pos;
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            IEnumerable<Vector2Int> AllTargets = GetAllTargets();
-            List<Vector2Int> ReachableTargets = GetReachableTargets();
-            List<Vector2Int> UnreachableTargets = new List<Vector2Int>();
             List<Vector2Int> result = new List<Vector2Int>();
-
-            if (AllTargets.Count() == 0)
+            float closestDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+            foreach (Vector2Int target in GetAllTargets())
             {
-                if (IsPlayerUnitBrain)
+                float distance  = DistanceToOwnBase(target);
+                if (distance < closestDistance)
                 {
-                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+                    closestDistance = distance; 
+                    closestTarget = target;
                 }
-                else
+            }
+
+            _currentTargets.Clear();
+            if (closestDistance < float.MaxValue)
+            {
+                _currentTargets.Add(closestTarget);
+                if (IsTargetInRange(closestTarget))
                 {
-                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+                    result.Add(closestTarget);
                 }
             }
             else
             {
-                float closestDistance = float.MaxValue;
-
-                Vector2Int closestTarget = AllTargets.ElementAt(0);
-                foreach (Vector2Int target in AllTargets)
+                if (IsPlayerUnitBrain)
                 {
-                    float distance = DistanceToOwnBase(target);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestTarget = target;
-                    }
-                }
-
-                if (ReachableTargets.Contains(closestTarget))
-                {
-                    result.Add(closestTarget);
+                    _currentTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
                 }
                 else
                 {
-                    UnreachableTargets.Add(closestTarget);
+                    _currentTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
                 }
-
-                //result.Clear();
-                result.Add(closestTarget);
             }
+
             return result;
         }
 
