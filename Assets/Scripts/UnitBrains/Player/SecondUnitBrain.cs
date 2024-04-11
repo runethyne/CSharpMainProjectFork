@@ -19,6 +19,14 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
         private List<Vector2Int> _currentTargets = new List<Vector2Int>();
+        private static int unitCounter = 0;
+        private int unitNumber = 0;
+        private const int maxTargets = 3;
+
+        public SecondUnitBrain()
+        {
+            unitNumber = unitCounter++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -60,28 +68,15 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> result = new List<Vector2Int>();
-            float closestDistance = float.MaxValue;
-            Vector2Int closestTarget = Vector2Int.zero;
-            foreach (Vector2Int target in GetAllTargets())
-            {
-                float distance  = DistanceToOwnBase(target);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance; 
-                    closestTarget = target;
-                }
-            }
 
             _currentTargets.Clear();
-            if (closestDistance < float.MaxValue)
+
+            foreach (Vector2Int target in GetAllTargets())
             {
-                _currentTargets.Add(closestTarget);
-                if (IsTargetInRange(closestTarget))
-                {
-                    result.Add(closestTarget);
-                }
+                _currentTargets.Add(target);
             }
-            else
+
+            if (_currentTargets.Count == 0)
             {
                 if (IsPlayerUnitBrain)
                 {
@@ -92,7 +87,20 @@ namespace UnitBrains.Player
                     _currentTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
                 }
             }
+            else
+            {
+                _currentTargets.Sort((a, b) => DistanceToOwnBase(a).CompareTo(DistanceToOwnBase(b)));
 
+                for (int i = 0; i < maxTargets && i < _currentTargets.Count; i++)
+                {
+                    int targetIndex = (unitNumber + i) % _currentTargets.Count;
+
+                    if (IsTargetInRange(_currentTargets[targetIndex]))
+                    {
+                        result.Add(_currentTargets[targetIndex]);
+                    }
+                }
+            }
             return result;
         }
 
