@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
+using UnitBrains.Pathfinding;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -56,7 +58,11 @@ namespace UnitBrains.Player
                 }
                 else
                 {
-                    return unit.Pos.CalcNextStepTowards(_currentTargets[0]);
+                    return base.GetNextStep();
+                    /*
+                    
+                    return AStarUnitPath
+                        unit.Pos.CalcNextStepTowards(_currentTargets[0]);*/
                 }
             }
             else
