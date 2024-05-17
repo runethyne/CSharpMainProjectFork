@@ -50,7 +50,7 @@ namespace UnitBrains.Pathfinding
                         break;
                     }
 
-                    if (runtimeModel.TileIsNotWall(newCoord) && !ReachedleCoords.Contains(newCoord))
+                    if (runtimeModel.IsTileWalkable(newCoord) && !ReachedleCoords.Contains(newCoord))
                     {
                         ReachableTiles.Add(new Tile(newCoord, endPoint, closedTile));
                         ReachedleCoords.Add(newCoord);
