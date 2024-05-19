@@ -34,7 +34,7 @@ namespace UnitBrains.Player
                 return unit.Pos;
 
             //если есть рекомендованая цель - идем к ней по пути и атакуем
-            IReadOnlyUnit recomendTarget = PlayerUnitsTargetManager.getInstance().recomendTarget;
+            IReadOnlyUnit recomendTarget = _unitsTargetManager.recomendTarget;
             if (recomendTarget != null)
             {
                 AStarUnitPath path = new AStarUnitPath(runtimeModel, unit.Pos, recomendTarget.Pos);

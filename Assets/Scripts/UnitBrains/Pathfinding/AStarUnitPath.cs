@@ -7,7 +7,7 @@ namespace UnitBrains.Pathfinding
 {
     public class AStarUnitPath : BaseUnitPath
     {
-        Vector2Int[] directions = new Vector2Int[] {new Vector2Int(1,0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };//направления движения
+        private Vector2Int[] _directions = new Vector2Int[] {new Vector2Int(1,0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };//направления движения
 
         public AStarUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
         {
@@ -29,18 +29,12 @@ namespace UnitBrains.Pathfinding
 
                 ReachableTiles.Remove(closedTile); //уберем из известных клеток closedTile
 
-                /*//Если этот тайл наша конечная точка - то установим endTile и выйдем из цикла
-                if (closedTile.coord == endPoint) 
-                {
-                    endTile = new Tile(endPoint, endPoint, closedTile); 
-                    break; 
-                }*/
                 //добавим в список изученых координат. Понадобитсья ниже что бы избежать повторного изучения тайлов
                 ReachedleCoords.Add(closedTile.coord);
 
                 //исследуем наш endTile и добавим соседние клеки в ReachableTiles
                 //проверяем каждую клетку на существование и дсотупность, перед добавлением. (По 4 направлениям)
-                foreach (Vector2Int dir in directions) {
+                foreach (Vector2Int dir in _directions) {
                     Vector2Int newCoord = closedTile.coord + dir;
 
                     if (newCoord == endPoint)
@@ -50,11 +44,12 @@ namespace UnitBrains.Pathfinding
                         break;
                     }
 
-                    if (runtimeModel.IsTileWalkable(newCoord) && !ReachedleCoords.Contains(newCoord))
+                    if (runtimeModel.TileIsNotWall(newCoord) && !ReachedleCoords.Contains(newCoord))
                     {
                         ReachableTiles.Add(new Tile(newCoord, endPoint, closedTile));
                         ReachedleCoords.Add(newCoord);
                     }
+
                 }
 
             }

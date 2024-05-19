@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Utilities;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -19,7 +21,10 @@ namespace UnitBrains
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+
+        protected UnitsTargetManager _unitsTargetManager;
+
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -162,6 +167,11 @@ namespace UnitBrains
             }
 
             return result;
+        }
+
+        public void SetTargetManager(UnitsTargetManager targetManager)
+        {
+            _unitsTargetManager = targetManager;
         }
     }
 }
