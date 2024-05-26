@@ -19,6 +19,5 @@ namespace Model
         public IReadOnlyList<IReadOnlyBase> RoBases { get; }
 
         public bool IsTileWalkable(Vector2Int pos);
-        public bool TileIsNotWall(Vector2Int newCoord);
     }
 }

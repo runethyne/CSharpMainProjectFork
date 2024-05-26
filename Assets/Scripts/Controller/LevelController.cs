@@ -18,6 +18,7 @@ namespace Controller
         private readonly UnitsTargetManager _playerUnitsTargetManager;
         private readonly UnitsTargetManager _botUnitsTargetManager;
         private readonly RootView _rootView;
+        private readonly EffectsManager _effectsManager;
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
@@ -33,6 +34,7 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _effectsManager = ServiceLocator.Get<EffectsManager>();
 
             _playerUnitsTargetManager = new UnitsTargetManager(_runtimeModel, _timeUtil, RuntimeModel.PlayerId);
             _botUnitsTargetManager = new UnitsTargetManager(_runtimeModel, _timeUtil, RuntimeModel.BotPlayerId);

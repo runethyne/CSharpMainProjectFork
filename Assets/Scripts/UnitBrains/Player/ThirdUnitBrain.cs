@@ -19,7 +19,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
         if (modeMoving)
         {
             modeMoving = false;
-            chageModeTimer = 1f;
+            chageModeTimer = 0.3f;
             return;
         }
         else if(chageModeTimer > 0) //если таймер не нулевой - то отсчитываем, иначе можно стрел€ть
@@ -41,7 +41,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
         {
             if(!modeMoving) { //≈сли движение было отключено - то стоим на месте 1000 мс
                 modeMoving =true;
-                chageModeTimer = 1f;
+                chageModeTimer = 0.3f;
                 return unit.Pos;
             }
             else if (chageModeTimer > 0) //ждем 1000 мс

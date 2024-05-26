@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Utilities;
+using Assets.Scripts.Utilities.BuffManager;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -22,6 +23,7 @@ namespace Model.Runtime
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
+        private EffectsManager _effectsManager;
         private BaseUnitBrain _brain;
 
         private float _nextBrainUpdateTime = 0f;
@@ -37,6 +39,7 @@ namespace Model.Runtime
             _brain.SetUnit(this);
             _brain.SetTargetManager(targetManager);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _effectsManager = ServiceLocator.Get<EffectsManager>();
         }
 
         public void Update(float deltaTime, float time)
@@ -58,7 +61,13 @@ namespace Model.Runtime
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                //При атаке есть 5% шанс получить FireUp
+                if(Random.Range(1, 100)<= 5)
+                {
+                    ServiceLocator.Get<EffectsManager>().addEffect(this, new FireUpEffect(this));
+                }
+
+                _nextAttackTime = time + Config.AttackDelay * _effectsManager.getAttackDelayMod(this);
             }
         }
 
@@ -99,6 +108,12 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+
+            //При получении урона есть 40% шанс получить Stun
+            if (Random.Range(1, 100) <= 40)
+            {
+                ServiceLocator.Get<EffectsManager>().addEffect(this, new StunEffect(this));
+            }
         }
     }
 }

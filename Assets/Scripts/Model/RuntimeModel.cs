@@ -44,16 +44,10 @@ namespace Model
         {
             new (), new ()
         };
-        
+         
         public bool IsTileWalkable(Vector2Int pos)
         {
             return !Map[pos] && AllUnits.All(u => u.Pos != pos);
-        }
-
-        //Нужно для поиска пути, что бы вражеские юнмиты не загораживали проход
-        public bool TileIsNotWall(Vector2Int pos)
-        {
-            return !Map[pos];
         }
 
         public void SetMoneyForAll(int startMoneyPlayer, int startMoneyBot)

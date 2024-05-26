@@ -14,9 +14,22 @@ namespace UnitBrains.Pathfinding
         }
 
         protected override void Calculate()
+        {
+            CalcPath(false);
+            if (path == null)
+                CalcPath(true);
+
+            if (path == null)
+            {
+                path = new Vector2Int[] { startPoint, startPoint };
+                return; //попробуем снова на следующей прокрутке, может быть ситуация поменяется
+            }
+        }
+
+        private void CalcPath(bool ignoreUnits)
         { 
             List<Tile> ReachableTiles = new List<Tile> { new Tile(startPoint, endPoint, null) }; //Известные клетки. На старте нам известна только стартовая точка
-            List<Vector2Int> ReachedleCoords = new List<Vector2Int> { startPoint }; //изученые координаты
+            List<Tile> ReachedTiles = new List<Tile> {}; //изученые координаты
              
             Tile endTile = null;
 
@@ -30,49 +43,72 @@ namespace UnitBrains.Pathfinding
                 ReachableTiles.Remove(closedTile); //уберем из известных клеток closedTile
 
                 //добавим в список изученых координат. Понадобитсья ниже что бы избежать повторного изучения тайлов
-                ReachedleCoords.Add(closedTile.coord);
+                ReachedTiles.Add(closedTile);
 
                 //исследуем наш endTile и добавим соседние клеки в ReachableTiles
                 //проверяем каждую клетку на существование и дсотупность, перед добавлением. (По 4 направлениям)
                 foreach (Vector2Int dir in _directions) {
                     Vector2Int newCoord = closedTile.coord + dir;
 
-                    if (newCoord == endPoint)
+                    if (newCoord == endPoint)  
                     {
                         endTile = new Tile(newCoord, newCoord, closedTile);
-                        ReachableTiles.Clear();
+                        ReachableTiles.Clear(); 
                         break;
                     }
+                    
+                    bool exist = !
+                        (
+                       newCoord.x < 0 || newCoord.x >= runtimeModel.RoMap.Width ||
+                       newCoord.y < 0 || newCoord.y >= runtimeModel.RoMap.Height
+                       );
+                    if (!exist)
+                    {
+                        continue; 
+                    }
 
-                    if (runtimeModel.TileIsNotWall(newCoord) && !ReachedleCoords.Contains(newCoord))
+                    if (runtimeModel.RoMap[newCoord] || runtimeModel.RoUnits.Any(u => u.Pos == newCoord))
+                    {
+                        continue;
+                    }
+
+                    /*    //проверим клетку на занятость юнитом
+                        //Если в данный момент рассчитываем путь не игнорируя занятые иайлы - то пропускаем клетку
+                        if (runtimeModel.RoUnits.Any(u => u.Pos == newCoord) && !ignoreUnits)
+                    { 
+                        continue;
+                    }*/
+
+                    //Если клетка не изучена и существует на карте - то добавляем в список доступных к изучению
+                    
+                    if (!ReachableTiles.Any(pos => pos.coord.x == newCoord.x && pos.coord.y == newCoord.y)
+                        && !ReachedTiles.Any(pos => pos.coord.x == newCoord.x && pos.coord.y == newCoord.y)
+                        )
                     {
                         ReachableTiles.Add(new Tile(newCoord, endPoint, closedTile));
-                        ReachedleCoords.Add(newCoord);
                     }
 
                 }
 
             }
 
-            //по окончанию цикла имеем две ситуации. Либо endTile у нас null (значит путь НЕ найден) либо в нём конечный Tile с координами endPoint
-            //если null то просто вернем текущую клетку и стоим на месте.. 
-            if (endTile == null)
-            {
-                path = new Vector2Int[] { startPoint };
-                return; //попробуем снова на следующей прокрутке, может быть ситуация поменяется
-            }
+
 
             //В endTile по .prevTile можем выстроить путь от конечной до начальной точки
-            var result = new List<Vector2Int> { }; //наш путь
-            while (endTile.prevTile != null) 
+            if (endTile != null)
             {
-                result.Add(endTile.coord);
-                endTile = endTile.prevTile;
+                var result = new List<Vector2Int> { }; //наш путь
+                while (endTile.prevTile != null)
+                {
+                    result.Add(endTile.coord);
+                    endTile = endTile.prevTile;
+                }
+                result.Add(startPoint);
+                result.Reverse();
+                path = result.ToArray();
+
             }
-            result.Add(startPoint);
-            result.Reverse();
-            path = result.ToArray();
-            
+
         }
 
         private Tile getClosedTile(List<Tile> reachableTiles)
