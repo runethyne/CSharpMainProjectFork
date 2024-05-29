@@ -12,7 +12,7 @@ namespace Assets.Scripts.Utilities.BuffManager
         public FireUpEffect(Unit _unit) : base(_unit)
         {
             AttackDelayMod = 0.25f;
-            duration = 1f;
+            duration = 5f;
         }
     }
 }

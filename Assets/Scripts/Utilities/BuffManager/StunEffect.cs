@@ -11,8 +11,8 @@ namespace Assets.Scripts.Utilities.BuffManager
     {
         public StunEffect(Unit _unit) : base(_unit) 
         {
-            AttackDelayMod = 5.0f;
-            duration = 3f;
+            AttackDelayMod = 3.0f;
+            duration = 0.5f;
         }
     }
 }

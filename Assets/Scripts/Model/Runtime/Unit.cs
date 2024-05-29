@@ -61,11 +61,11 @@ namespace Model.Runtime
             
             if (_nextAttackTime < time && Attack())
             {
-                //При атаке есть 5% шанс получить FireUp
+               /* //При атаке есть 5% шанс получить FireUp
                 if(Random.Range(1, 100)<= 5)
                 {
                     ServiceLocator.Get<EffectsManager>().addEffect(this, new FireUpEffect(this));
-                }
+                }*/
 
                 _nextAttackTime = time + Config.AttackDelay * _effectsManager.getAttackDelayMod(this);
             }
