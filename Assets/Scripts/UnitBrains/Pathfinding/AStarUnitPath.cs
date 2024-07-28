@@ -67,23 +67,16 @@ namespace UnitBrains.Pathfinding
                         continue; 
                     }
 
-                    if (runtimeModel.RoMap[newCoord] || runtimeModel.RoUnits.Any(u => u.Pos == newCoord))
+                    if (runtimeModel.RoMap[newCoord] || (runtimeModel.RoUnits.Any(u => u.Pos == newCoord) && !ignoreUnits))
                     {
                         continue;
                     }
-
-                    /*    //проверим клетку на занятость юнитом
-                        //Если в данный момент рассчитываем путь не игнорируя занятые иайлы - то пропускаем клетку
-                        if (runtimeModel.RoUnits.Any(u => u.Pos == newCoord) && !ignoreUnits)
-                    { 
-                        continue;
-                    }*/
-
+                                        
                     //Если клетка не изучена и существует на карте - то добавляем в список доступных к изучению
                     
                     if (!ReachableTiles.Any(pos => pos.coord.x == newCoord.x && pos.coord.y == newCoord.y)
-                        && !ReachedTiles.Any(pos => pos.coord.x == newCoord.x && pos.coord.y == newCoord.y)
-                        )
+                        && !ReachedTiles.Any(pos => pos.coord.x == newCoord.x && pos.coord.y == newCoord.y)) 
+                        
                     {
                         ReachableTiles.Add(new Tile(newCoord, endPoint, closedTile));
                     }

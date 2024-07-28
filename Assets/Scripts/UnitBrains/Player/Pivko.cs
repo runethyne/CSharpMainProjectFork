@@ -52,6 +52,7 @@ public class Pivko : DefaultPlayerUnitBrain
         if (allFriendlyTargets.Length > 0)
         {
             IReadOnlyUnit unit = allFriendlyTargets[Random.Range(0, allFriendlyTargets.Length-1)];
+        
             ServiceLocator.Get<EffectsManager>().addEffect((Model.Runtime.Unit)unit, new FireUpEffect((Model.Runtime.Unit)unit));
             ServiceLocator.Get<VFXView>().PlayVFX(unit.Pos, VFXView.VFXType.BuffApplied);
 

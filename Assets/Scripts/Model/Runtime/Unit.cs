@@ -29,7 +29,10 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
+       public float attackRangeMod { get; set; } = 1f ;
+       public bool doubleshot { get; set; } = false;
+
         public Unit(UnitConfig config, Vector2Int startPos, UnitsTargetManager targetManager)
         {
             Config = config;
@@ -61,13 +64,7 @@ namespace Model.Runtime
             
             if (_nextAttackTime < time && Attack())
             {
-               /* //При атаке есть 5% шанс получить FireUp
-                if(Random.Range(1, 100)<= 5)
-                {
-                    ServiceLocator.Get<EffectsManager>().addEffect(this, new FireUpEffect(this));
-                }*/
-
-                _nextAttackTime = time + Config.AttackDelay * _effectsManager.getAttackDelayMod(this);
+                _nextAttackTime = time + Config.AttackDelay;
             }
         }
 
@@ -108,12 +105,6 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
-
-            //При получении урона есть 40% шанс получить Stun
-            if (Random.Range(1, 100) <= 40)
-            {
-                ServiceLocator.Get<EffectsManager>().addEffect(this, new StunEffect(this));
-            }
         }
     }
 }
