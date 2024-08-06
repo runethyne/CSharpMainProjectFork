@@ -10,18 +10,18 @@ using Utilities;
 public class EffectsManager 
 {
 
-     internal void addEffect(Unit unit, AbstractEffect effect)
+    internal void addEffect(Unit unit, AbstractEffect effect)
     {
-        switch (unit.Config.UnitType) 
+        switch (unit.Config.UnitType)
         {
             case 2:
-                unit.doubleshot = true;
+                unit.Config._doubleshot = true;
                 break;
             case 3:
-                unit.attackRangeMod = 3;
+                unit.Config._attackRangeMod = 3;
                 break;
             default:
                 break;
         }
-
+    }
 }

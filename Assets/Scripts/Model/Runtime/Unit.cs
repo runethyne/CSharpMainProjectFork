@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Utilities;
-using Assets.Scripts.Utilities.BuffManager;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -29,9 +28,6 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-
-       public float attackRangeMod { get; set; } = 1f ;
-       public bool doubleshot { get; set; } = false;
 
         public Unit(UnitConfig config, Vector2Int startPos, UnitsTargetManager targetManager)
         {

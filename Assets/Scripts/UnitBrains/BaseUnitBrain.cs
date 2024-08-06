@@ -77,7 +77,7 @@ namespace UnitBrains
         protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             AddProjectileToList(CreateProjectile(forTarget), intoList);
-            if (unit.doubleshot) {
+            if (unit.Config.doubleshot) {
                 AddProjectileToList(CreateProjectile(forTarget), intoList); }
 
         }
@@ -125,7 +125,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange* unit.attackRangeMod;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange* unit.Config.attackRangeMod;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -152,7 +152,7 @@ namespace UnitBrains
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.attackRangeMod;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.Config.attackRangeMod;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -160,7 +160,7 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.attackRangeMod;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.Config.attackRangeMod;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
